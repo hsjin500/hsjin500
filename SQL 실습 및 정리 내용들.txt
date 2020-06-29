@@ -189,7 +189,7 @@ where e.department_id=d.department_id(+)
 select employee_id, last_name, department_name
 from departments d, employees e
 where d.department_id(+)=e.department_id
-order by employee_id asc
+order by employee_id asc/
 /---->107 나옴 (king 두번나오는데?)
 
 
@@ -227,20 +227,66 @@ group by department_id, job_id
 /--->그룹하는 순서는 상관이 없다. select에서 나오는 컬럼순서대로 그룹화가 진행되기 때문.
  그래서 select의 순서가 중요하다.
 
+select department_id, job_id, AVG(salary)
+from employees
+where AVG(salary) > 8000
+group by department_id, job_id
+/--->where 절에 그룹함수를 사용할 수 없다.(행을 제한하는 절이 where절 ; 그룹이 올수x)
+
+select department_id, job_id, AVG(salary)
+from employees
+having AVG(salary) > 8000
+group by department_id, job_id
+/--->그룹을 제한하는 절이 having절 ; 그룹을 제한 하는 조건 절
+
+select job_id, sum(salary) as payroll
+from employees
+where job_id not like '%REP%'
+group by job_id
+having sum(salary) > 13000/
+order by sum(salary)
+/--->
+
+select job_id, max(salary) as MAX, min(salary) as MIN, sum(salary) as SUM, avg(salary) as AVG
+from employees
+group by job_id
+order by job_id asc
+/--->각 직업별, 최대 급여, 최소 급여, 급여 총 합 및 평균 급여를 출력하시오.
+단 최대 급여는 MAX,MIN,SUM,AVG로 출력하고, 직업을 오름차순으로 정렬하시오.
+
+select job_id, count(employee_id)
+from employees
+group by job_id
+/--->동일한 직업을 가진 사원들의 총 수를 출력하시오.
+
+select count(distinct manager_id)
+from employees
+/--->매니저로 근무하는 사원들의 총 수를 출력하시오.
+
+select max(salary)-min(salary)
+from employees
+/--->사내의 최대급여 와 최소급여 차이.
+
+select manager_id, min(salary)
+from employees
+where manager_id is not null
+having min(salary) >= 5000
+group by manager_id
+order by min(salary) desc
+/--->매니저의 사번 및 그 매니저 밑 사번들 중 최소 급여를 받는 사원의 급여를 출력하시오.
+ -매니저가 없는 사람들은 제외한다.
+ -최소 급여가 5000 미만인 경우는 제외한다.
+ -급여 기준 역순으로 조회한다.
+(해결방법 : 매니저 아이디를 그룹핑해서 그 안에서 최소 최대 찾으면 된다.)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+select d.department_name, d.location_id, count(e.employee_id), AVG(e.salary)
+from departments d, employees e
+where d.department_id=e.department_id
+group by location_id, department_name
+order by location_id
+/--->부서 명, 부서위치id, 각 부서 별 사원 총 수, 각 부서 별 평균 급여를 출력하되, 부서위치를
+오름차순으로 출력하시오.
 
 
 
